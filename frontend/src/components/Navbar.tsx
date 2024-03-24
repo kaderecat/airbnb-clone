@@ -3,10 +3,15 @@ import { FaUserCircle } from "react-icons/fa";
 import { GiHamburgerMenu } from "react-icons/gi";
 import Search from "./Search";
 import SmallSearch from "./SmallSearch";
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import Menu from "./Menu";
 
-const Navbar = () => {
+interface Navbar {
+  setOpenRegister: Dispatch<SetStateAction<boolean>>;
+  setOpenLogin: Dispatch<SetStateAction<boolean>>;
+}
+
+const Navbar = ({ setOpenRegister, setOpenLogin }: Navbar) => {
   const [active, setActive] = useState(false);
   const [menu, setMenu] = useState(false);
   const menuRef = useRef(null);
@@ -77,15 +82,19 @@ const Navbar = () => {
             <GiHamburgerMenu />
             <FaUserCircle />
             {menu && (
-              <div className="absolute bg-white shadow-inner text-[14px] top-[60px] rounded-[12px] border-[1px] border-white left-[-150px] py-2 w-[250px] z-[99]">
-                <Menu />
+              <div className="absolute bg-white shadow-md text-[14px] top-[60px] rounded-[12px] border-[1px] left-[-150px]  w-[250px] z-[99]">
+                <Menu setOpenLogin={setOpenLogin} setOpenRegister={setOpenRegister} />
               </div>
             )}
           </div>
         </div>
       </div>
       <div className=" lg:hidden  justify-between items-center gap-5 md:block md:text-center w-[100%]">
-        <div className={`${active ? "md:hidden" : ""} lg:block md:flex sm:hidden sm:justify-center sm:items-center `}>
+        <div
+          className={`${
+            active ? "md:hidden" : ""
+          } lg:block md:flex sm:hidden sm:justify-center sm:items-center `}
+        >
           <button className="bg-white hover:bg-gray-100 opacity-70  py-3 px-4  rounded-full">
             Stays
           </button>
