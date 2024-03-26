@@ -52,7 +52,12 @@ const Modal = ({
     onSubmit();
   };
 
-  const handleSecondaryAction = () => {};
+  const handleSecondaryAction = () => {
+    if (disabled || !secondaryAction) {
+      return;
+    }
+    secondaryAction();
+  };
 
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-neutral-800/70 z-50 overflow-x-hidden overflow-y-auto">

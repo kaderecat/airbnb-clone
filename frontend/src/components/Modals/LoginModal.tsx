@@ -3,6 +3,8 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import Heading from "../Heading";
 import Input from "../Input";
 import Modal from "./Modal";
+import { newRequest } from "../../utills/newRequest";
+import { AxiosError } from "axios";
 
 interface LoginModalI {
   setOpenRegister: Dispatch<SetStateAction<boolean>>;
@@ -16,6 +18,7 @@ const LoginModal = ({
   isOpenLogin,
 }: LoginModalI) => {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<AxiosError>();
 
   const {
     register,
@@ -30,9 +33,18 @@ const LoginModal = ({
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     setLoading(true);
-    console.log(data);
-    setLoading(false)
-    
+    newRequest
+      .post("/auth/login", data)
+      .then((res) => {
+        localStorage.setItem("currentUser", JSON.stringify(res.data));
+        setOpenLogin(false);
+      })
+      .catch((error) => {
+        setError(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const onToggle = () => {
@@ -50,6 +62,7 @@ const LoginModal = ({
         register={register}
         errors={errors}
         required
+        serverError={error}
       />
       <Input
         id="password"

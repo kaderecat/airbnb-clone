@@ -3,6 +3,8 @@ import Modal from "./Modal";
 import { useState } from "react";
 import Input from "../Input";
 import Heading from "../Heading";
+import { newRequest } from "../../utills/newRequest";
+import { AxiosError } from "axios";
 
 interface RegisterModalI {
   isOpenReg?: boolean;
@@ -16,6 +18,7 @@ const RegisterModal = ({
   setOpenLogin,
 }: RegisterModalI) => {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<AxiosError>();
 
   const {
     register,
@@ -31,12 +34,24 @@ const RegisterModal = ({
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     setLoading(true);
-    console.log(data);
 
-    setTimeout(() => {
-      setOpenReg(false);
-      setLoading(false);
-    }, 3000);
+    newRequest
+      .post("/auth/register", data)
+      .then((res) => {
+        if (res.status === 201) {
+          setTimeout(() => {
+            setOpenReg(false);
+            setLoading(false);
+          }, 300);
+        }
+
+        setOpenReg(false);
+        setOpenLogin(true);
+      })
+      .catch((error) => {
+        setError(error);
+      })
+      .finally(() => setLoading(false));
   };
 
   const onToggle = () => {
@@ -53,6 +68,7 @@ const RegisterModal = ({
         disabled={loading}
         register={register}
         errors={errors}
+        serverError={error}
         required
       />
       <Input

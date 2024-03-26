@@ -5,16 +5,24 @@ import Search from "./Search";
 import SmallSearch from "./SmallSearch";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import Menu from "./Menu";
+import { getCurrentUser } from "../utills/getCurrentUser";
 
 interface Navbar {
   setOpenRegister: Dispatch<SetStateAction<boolean>>;
   setOpenLogin: Dispatch<SetStateAction<boolean>>;
+  setOpenRentModal: Dispatch<SetStateAction<boolean>>;
 }
 
-const Navbar = ({ setOpenRegister, setOpenLogin }: Navbar) => {
+const Navbar = ({
+  setOpenRegister,
+  setOpenLogin,
+  setOpenRentModal,
+}: Navbar) => {
   const [active, setActive] = useState(false);
   const [menu, setMenu] = useState(false);
   const menuRef = useRef(null);
+
+  const currentUser = getCurrentUser();
 
   const isActive = () => {
     window.scrollY > 0 ? setActive(true) : setActive(false);
@@ -39,8 +47,16 @@ const Navbar = ({ setOpenRegister, setOpenLogin }: Navbar) => {
     };
   }, []);
 
+  const onRent = () => {
+    if (!currentUser) {
+      return setOpenLogin(true);
+    }
+
+    setOpenRentModal(true);
+  };
+
   return (
-    <div className="sticky top-0 z-20">
+    <div className="sticky top-0 z-50 bg-white">
       <div className="flex sm:hidden justify-between  items-center py-5 px-5 text-[18px] md:flex lg:flex  transition">
         <div className="cursor-pointer  ">
           <img
@@ -71,7 +87,10 @@ const Navbar = ({ setOpenRegister, setOpenLogin }: Navbar) => {
           </div>
         )}
         <div className=" sm:flex  justify-between items-center gap-5 md:flex">
-          <button className="bg-white hover:bg-gray-100 opacity-70 text-black font-semibold  py-3 px-4  rounded-full">
+          <button
+            onClick={onRent}
+            className="bg-white hover:bg-gray-100 opacity-70 text-black font-semibold  py-3 px-4  rounded-full"
+          >
             Airbnb you home
           </button>
           <div
@@ -83,7 +102,11 @@ const Navbar = ({ setOpenRegister, setOpenLogin }: Navbar) => {
             <FaUserCircle />
             {menu && (
               <div className="absolute bg-white shadow-md text-[14px] top-[60px] rounded-[12px] border-[1px] left-[-150px]  w-[250px] z-[99]">
-                <Menu setOpenLogin={setOpenLogin} setOpenRegister={setOpenRegister} />
+                <Menu
+                  setOpenRentModal={onRent}
+                  setOpenLogin={setOpenLogin}
+                  setOpenRegister={setOpenRegister}
+                />
               </div>
             )}
           </div>

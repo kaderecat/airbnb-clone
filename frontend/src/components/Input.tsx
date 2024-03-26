@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import { FieldErrors, FieldValues, UseFormRegister } from "react-hook-form";
 import { BiDollar } from "react-icons/bi";
 
@@ -10,6 +11,7 @@ interface InputProps {
   required?: boolean;
   register: UseFormRegister<FieldValues>;
   errors: FieldErrors;
+  serverError?: AxiosError;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -21,13 +23,15 @@ const Input: React.FC<InputProps> = ({
   register,
   required,
   errors,
+  serverError,
 }) => {
   return (
     <div className="w-full relative">
       {formatPrice && (
         <BiDollar
           size={24}
-          className=" text-neutral-700 absolute top-5 left-2" />
+          className=" text-neutral-700 absolute top-5 left-2"
+        />
       )}
       <input
         id={id}
@@ -53,6 +57,7 @@ const Input: React.FC<InputProps> = ({
             ${errors[id] ? "focus:border-rose-500" : "focus:border-black"}
           `}
       />
+      {serverError ? <p>{serverError.response?.data}</p> : null}
       <label
         className={`
             absolute 
