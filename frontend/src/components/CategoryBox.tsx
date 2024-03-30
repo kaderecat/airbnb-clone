@@ -17,7 +17,7 @@ const CategoryBox = ({
   q,
 }: CategoryBoxInterface) => {
   const handleCategoryParams = () => {
-    if (q === label) {
+    if (q === label.toLocaleLowerCase()) {
       return setSearchParams("");
     }
     setSearchParams((prev) => {

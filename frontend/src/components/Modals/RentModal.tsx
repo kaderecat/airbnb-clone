@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { Suspense, lazy, useMemo, useState } from "react";
 import Modal from "./Modal";
 import Heading from "../Heading";
 import { categoryArr } from "../Categories";
 import CategoryInput from "../CategoryInput";
 import { FieldValues, useForm } from "react-hook-form";
+import CountrySelect from "../CountrySelect";
+import Map from "../Map";
+import Counter from "../Counter";
 
 interface RentModalProps {
   isOpenRentModal: boolean;
@@ -33,7 +36,7 @@ const RentModal = ({ isOpenRentModal, setOpenRent }: RentModalProps) => {
   } = useForm<FieldValues>({
     defaultValues: {
       category: "",
-      location: null,
+      location: [50, -0.09],
       guestCount: 1,
       roomCount: 1,
       bathroomCount: 1,
@@ -45,8 +48,18 @@ const RentModal = ({ isOpenRentModal, setOpenRent }: RentModalProps) => {
   });
 
   const category = watch("category");
+  const location = watch("location");
+  const guestCount = watch("guestCount");
+  const roomCount = watch("roomCount");
+  const bathroomCount = watch("bathroomCount");
+
+  // const Map =  lazy(() => import("../Map"));
 
   console.log(category);
+  console.log(location);
+  console.log(guestCount);
+  console.log(roomCount);
+  console.log(bathroomCount);
 
   const onBack = () => {
     if (step === STEPS.CATEGORY) {
@@ -91,6 +104,77 @@ const RentModal = ({ isOpenRentModal, setOpenRent }: RentModalProps) => {
     </div>
   );
 
+  if (step === STEPS.LOCATION) {
+    bodyContent = (
+      <div className=" flex flex-col gap-8">
+        <Heading
+          title="Where is your place located?"
+          subtitle="Help guests find you!"
+        />
+        <CountrySelect
+          value={location}
+          onChange={(value) => {
+            setValue("location", value, {
+              shouldDirty: true,
+              shouldTouch: true,
+              shouldValidate: true,
+            });
+          }}
+        />
+        <Suspense>
+          <Map center={location.latlng || [50, -0.09]} />
+        </Suspense>
+      </div>
+    );
+  }
+
+  if (step === STEPS.INFO) {
+    bodyContent = (
+      <div className="flex flex-col gap-8">
+        <Heading
+          title="Share some basics about your place"
+          subtitle="What amenities do you have?"
+        />
+        <Counter
+          title="Guests"
+          subtitle="How many guests do you allow?"
+          value={guestCount}
+          onChange={(value) =>
+            setValue("guestCount", value, {
+              shouldDirty: true,
+              shouldTouch: true,
+              shouldValidate: true,
+            })
+          }
+        />
+        <Counter
+          title="Rooms"
+          subtitle="How many rooms do you have?"
+          value={roomCount}
+          onChange={(value) =>
+            setValue("roomCount", value, {
+              shouldDirty: true,
+              shouldTouch: true,
+              shouldValidate: true,
+            })
+          }
+        />
+        <Counter
+          title="Bathrooms"
+          subtitle="How many bathrooms do you have?"
+          value={bathroomCount}
+          onChange={(value) =>
+            setValue("bathroomCount", value, {
+              shouldDirty: true,
+              shouldTouch: true,
+              shouldValidate: true,
+            })
+          }
+        />
+      </div>
+    );
+  }
+
   return (
     <div>
       <Modal
@@ -102,7 +186,7 @@ const RentModal = ({ isOpenRentModal, setOpenRent }: RentModalProps) => {
         setOpen={setOpenRent}
         secondaryActionLabel={step === STEPS.CATEGORY ? undefined : "Back"}
         secondaryAction={onBack}
-        onSubmit={() => {}}
+        onSubmit={onNext}
       />
     </div>
   );
