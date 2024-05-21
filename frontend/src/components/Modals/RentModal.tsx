@@ -1,12 +1,17 @@
-import { Suspense, lazy, useMemo, useState } from "react";
+import { Suspense, useState } from "react";
 import Modal from "./Modal";
 import Heading from "../Heading";
-import { categoryArr } from "../Categories";
 import CategoryInput from "../CategoryInput";
-import { FieldValues, useForm } from "react-hook-form";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import CountrySelect from "../CountrySelect";
 import Map from "../Map";
 import Counter from "../Counter";
+import CloudinaryUploadWidget from "../CloudinaryUploadWidget";
+import Input from "../Input";
+import { newRequest } from "../../utills/newRequest";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { categoryArr } from "../../utills/CategoriesArray";
 
 interface RentModalProps {
   isOpenRentModal: boolean;
@@ -25,6 +30,7 @@ enum STEPS {
 const RentModal = ({ isOpenRentModal, setOpenRent }: RentModalProps) => {
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(STEPS.CATEGORY);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -52,14 +58,7 @@ const RentModal = ({ isOpenRentModal, setOpenRent }: RentModalProps) => {
   const guestCount = watch("guestCount");
   const roomCount = watch("roomCount");
   const bathroomCount = watch("bathroomCount");
-
-  // const Map =  lazy(() => import("../Map"));
-
-  console.log(category);
-  console.log(location);
-  console.log(guestCount);
-  console.log(roomCount);
-  console.log(bathroomCount);
+  const imageSrc = watch("imageSrc");
 
   const onBack = () => {
     if (step === STEPS.CATEGORY) {
@@ -175,6 +174,95 @@ const RentModal = ({ isOpenRentModal, setOpenRent }: RentModalProps) => {
     );
   }
 
+  if (step === STEPS.IMAGES) {
+    bodyContent = (
+      <div>
+        <Heading title="Upload image" subtitle="Choose image" />
+        <CloudinaryUploadWidget
+          value={imageSrc}
+          onChange={(value) =>
+            setValue("imageSrc", value, {
+              shouldDirty: true,
+              shouldTouch: true,
+              shouldValidate: true,
+            })
+          }
+        />
+      </div>
+    );
+  }
+
+  if (step === STEPS.DESCRIPTION) {
+    bodyContent = (
+      <div className="flex flex-col gap-8">
+        <Heading
+          title="How would you describe your place?"
+          subtitle="Short and sweet works bets!"
+        />
+        <Input
+          id="title"
+          label="Title"
+          disabled={loading}
+          register={register}
+          errors={errors}
+          required
+        />
+        <Input
+          id="description"
+          label="Description"
+          disabled={loading}
+          register={register}
+          errors={errors}
+          required
+        />
+      </div>
+    );
+  }
+
+  const onSubmit: SubmitHandler<FieldValues> = (data) => {
+    if (step !== STEPS.PRICE) {
+      return onNext();
+    }
+
+    setLoading(true);
+    newRequest
+      .post("/listings", data)
+      .then(() => {
+        navigate(0);
+        reset();
+        setOpenRent(false);
+        toast.success("Listing created!");
+      })
+      .catch((error) => {
+        console.log(error);
+        toast("Something went wrong");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  if (step === STEPS.PRICE) {
+    bodyContent = (
+      <div className="flex flex-col gap-8">
+        <Heading
+          title="Now , set your price"
+          subtitle="How much do you charge per night?"
+        />
+        <Input
+          id="price"
+          label="Price"
+          formatPrice
+          type="number"
+          disabled={loading}
+          register={register}
+          errors={errors}
+          required
+        />
+      </div>
+    );
+  }
+
   return (
     <div>
       <Modal
@@ -186,7 +274,7 @@ const RentModal = ({ isOpenRentModal, setOpenRent }: RentModalProps) => {
         setOpen={setOpenRent}
         secondaryActionLabel={step === STEPS.CATEGORY ? undefined : "Back"}
         secondaryAction={onBack}
-        onSubmit={onNext}
+        onSubmit={handleSubmit(onSubmit)}
       />
     </div>
   );

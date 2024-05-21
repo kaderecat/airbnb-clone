@@ -18,7 +18,7 @@ const CategoryInput = ({
       className={`rounded-xl border-2 p-2 flex flex-col gap-1 hover:border-black transition cursor-pointer ${
         selected ? "border-black" : "border-neutral-200"
       }`}
-      onClick={() => onClick(label)}
+      onClick={() => onClick(label.toLocaleLowerCase())}
     >
       <Icon size={20} />
       <div className="font-semibold">{label}</div>

@@ -6,6 +6,18 @@ import createHttpError from "http-errors";
 import jwt from "jsonwebtoken";
 import { env } from "../utils/envValidate";
 
+export const getUser: RequestHandler = async (req, res, next) => {
+  const { email } = req.body;
+
+  try {
+    const existingUser = await User.find({ email });
+
+    res.status(200).send(existingUser);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const registerFn: RequestHandler = async (req, res, next) => {
   const { email, name, password } = req.body;
   try {
@@ -48,6 +60,7 @@ export const loginFn: RequestHandler = async (req, res, next) => {
     const token = jwt.sign(
       {
         id: user._id,
+        favorites: user.favorites,
       },
       env.JWT_KEY
     );

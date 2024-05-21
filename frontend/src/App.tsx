@@ -1,11 +1,14 @@
 import { useState } from "react";
 import "./App.css";
+import "react-toastify/dist/ReactToastify.css";
 import NavFooter from "./components/NavFooter";
 import Navbar from "./components/Navbar";
 import RegisterModal from "./components/Modals/RegisterModal";
 import LoginModal from "./components/Modals/LoginModal";
 import Categories from "./components/Categories";
 import RentModal from "./components/Modals/RentModal";
+import { ToastContainer } from "react-toastify";
+import Home from "./Home";
 
 function App() {
   const [openRegister, setOpenRegister] = useState(false);
@@ -14,7 +17,12 @@ function App() {
 
   return (
     <div className="">
-      <Navbar setOpenRentModal={setOpenRentModal} setOpenRegister={setOpenRegister} setOpenLogin={setOpenLogin} />
+      <ToastContainer />
+      <Navbar
+        setOpenRentModal={setOpenRentModal}
+        setOpenRegister={setOpenRegister}
+        setOpenLogin={setOpenLogin}
+      />
       <div className="md:hidden absolute flex my-4 justify-center items-center bottom-0 left-0 right-0">
         <NavFooter setOpenLogin={setOpenLogin} />
       </div>
@@ -32,8 +40,14 @@ function App() {
           setOpenLogin={setOpenLogin}
         />
       )}
-      {openRentModal && <RentModal setOpenRent={setOpenRentModal} isOpenRentModal={openRentModal} />}
+      {openRentModal && (
+        <RentModal
+          setOpenRent={setOpenRentModal}
+          isOpenRentModal={openRentModal}
+        />
+      )}
       <Categories />
+      <Home />
     </div>
   );
 }

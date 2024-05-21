@@ -5,6 +5,7 @@ import Input from "../Input";
 import Modal from "./Modal";
 import { newRequest } from "../../utills/newRequest";
 import { AxiosError } from "axios";
+import { toast } from "react-toastify";
 
 interface LoginModalI {
   setOpenRegister: Dispatch<SetStateAction<boolean>>;
@@ -38,9 +39,11 @@ const LoginModal = ({
       .then((res) => {
         localStorage.setItem("currentUser", JSON.stringify(res.data));
         setOpenLogin(false);
+        toast.success("Logged in succesfully!");
       })
       .catch((error) => {
         setError(error);
+        toast("Something went wrong!");
       })
       .finally(() => {
         setLoading(false);
