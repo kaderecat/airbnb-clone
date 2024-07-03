@@ -44,7 +44,8 @@ const Modal = ({
     }, 300);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
     if (disabled) {
       return;
     }

@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import authRouter from "./routes/auth.route";
 import listingsRouter from "./routes/listings.route";
+import reservationsRouter from "./routes/reservations.route";
 import likeRouter from './routes/like.route'
 import createHttpError, { isHttpError } from "http-errors";
 
@@ -15,6 +16,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRouter);
 app.use("/api/listings", listingsRouter);
 app.use("/api/likes", likeRouter);
+app.use('/api/reservations' , reservationsRouter)
 
 app.use((req, res, next) => {
   next(createHttpError(404, "Endpoint not found!"));

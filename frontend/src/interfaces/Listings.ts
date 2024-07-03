@@ -1,7 +1,10 @@
 export interface Listings {
   _id: string;
   category: string;
-  location: string;
+  location: {
+    latlng: [number];
+    label: string;
+  };
   guestCount: number;
   roomCount: number;
   bathroomCount: number;
@@ -9,4 +12,5 @@ export interface Listings {
   title: string;
   imageSrc: string;
   description: string;
+  owner: string;
 }

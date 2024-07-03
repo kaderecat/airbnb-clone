@@ -4,3 +4,4 @@ export interface currentUser {
   name: string;
   favorites: [string];
 }
+

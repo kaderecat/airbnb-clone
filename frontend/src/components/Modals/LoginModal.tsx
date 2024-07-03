@@ -6,6 +6,7 @@ import Modal from "./Modal";
 import { newRequest } from "../../utills/newRequest";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 interface LoginModalI {
   setOpenRegister: Dispatch<SetStateAction<boolean>>;
@@ -20,6 +21,8 @@ const LoginModal = ({
 }: LoginModalI) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<AxiosError>();
+
+  const navigate = useNavigate();
 
   const {
     register,
@@ -40,6 +43,7 @@ const LoginModal = ({
         localStorage.setItem("currentUser", JSON.stringify(res.data));
         setOpenLogin(false);
         toast.success("Logged in succesfully!");
+        navigate(0);
       })
       .catch((error) => {
         setError(error);

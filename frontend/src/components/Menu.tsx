@@ -6,12 +6,14 @@ import { useNavigate } from "react-router-dom";
 interface Menu {
   setOpenRegister: Dispatch<SetStateAction<boolean>>;
   setOpenLogin: Dispatch<SetStateAction<boolean>>;
-  setOpenRentModal: () => void;
+  setOpenRentModal: Dispatch<SetStateAction<boolean>>;
 }
 
 const Menu = ({ setOpenRegister, setOpenLogin, setOpenRentModal }: Menu) => {
   const currentUser = getCurrentUser();
   const navigate = useNavigate();
+
+  console.log(currentUser);
 
   const logoutHandler = async () => {
     try {
@@ -27,15 +29,22 @@ const Menu = ({ setOpenRegister, setOpenLogin, setOpenRentModal }: Menu) => {
     <div className="border-[1px] rounded-[12px] ">
       {currentUser ? (
         <>
-          <div className="p-3 my-1 hover:bg-gray-100 font-semibold">
-            My trips
-          </div>
           <div className="p-3 my-1 hover:bg-gray-100  ">My fovorites</div>
           <hr />
-          <div className="p-3 my-1 hover:bg-gray-100  ">My reservations</div>
-          <div className="p-3 my-1 hover:bg-gray-100 ">My proterties</div>
           <div
-            onClick={setOpenRentModal}
+            className="p-3 my-1 hover:bg-gray-100  "
+            onClick={() => navigate(`/reservations/${currentUser._id}`)}
+          >
+            My reservations
+          </div>
+          <div
+            className="p-3 my-1 hover:bg-gray-100 "
+            onClick={() => navigate(`my-properties/${currentUser._id}`)}
+          >
+            My proterties
+          </div>
+          <div
+            onClick={() => setOpenRentModal((prev) => !prev)}
             className="p-3 my-1 hover:bg-gray-100  "
           >
             Airbnb my home
@@ -61,7 +70,7 @@ const Menu = ({ setOpenRegister, setOpenLogin, setOpenRentModal }: Menu) => {
           <hr />
           <div className="p-3 my-1 hover:bg-gray-100  ">Gift cards</div>
           <div
-            onClick={() => setOpenRentModal}
+            onClick={() => setOpenLogin((prev) => !prev)}
             className="p-3 my-1 hover:bg-gray-100 "
           >
             Airbnb your home

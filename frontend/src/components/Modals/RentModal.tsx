@@ -1,4 +1,4 @@
-import { Suspense, useState } from "react";
+import { useState } from "react";
 import Modal from "./Modal";
 import Heading from "../Heading";
 import CategoryInput from "../CategoryInput";
@@ -12,6 +12,7 @@ import { newRequest } from "../../utills/newRequest";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { categoryArr } from "../../utills/CategoriesArray";
+import { getCurrentUser } from "../../utills/getCurrentUser";
 
 interface RentModalProps {
   isOpenRentModal: boolean;
@@ -32,6 +33,8 @@ const RentModal = ({ isOpenRentModal, setOpenRent }: RentModalProps) => {
   const [step, setStep] = useState(STEPS.CATEGORY);
   const navigate = useNavigate();
 
+  const user = getCurrentUser();
+
   const {
     register,
     handleSubmit,
@@ -42,7 +45,13 @@ const RentModal = ({ isOpenRentModal, setOpenRent }: RentModalProps) => {
   } = useForm<FieldValues>({
     defaultValues: {
       category: "",
-      location: [50, -0.09],
+      location: {
+        flag: "",
+        label: "",
+        latlng: [50, -0.09],
+        region: "",
+        value: "",
+      },
       guestCount: 1,
       roomCount: 1,
       bathroomCount: 1,
@@ -120,9 +129,7 @@ const RentModal = ({ isOpenRentModal, setOpenRent }: RentModalProps) => {
             });
           }}
         />
-        <Suspense>
-          <Map center={location.latlng || [50, -0.09]} />
-        </Suspense>
+        <Map center={location.latlng || [50, -0.09]} />
       </div>
     );
   }
@@ -224,14 +231,17 @@ const RentModal = ({ isOpenRentModal, setOpenRent }: RentModalProps) => {
       return onNext();
     }
 
+
+    const newData = { ...data, owner: user._id };
+
     setLoading(true);
     newRequest
-      .post("/listings", data)
+      .post("/listings", newData)
       .then(() => {
-        navigate(0);
         reset();
         setOpenRent(false);
         toast.success("Listing created!");
+        navigate(0);
       })
       .catch((error) => {
         console.log(error);

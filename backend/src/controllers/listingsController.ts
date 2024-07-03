@@ -6,6 +6,10 @@ interface ListingBody {
   category: string;
   location: {
     label: string;
+    flag: string;
+    lanlng: number[];
+    region: string;
+    value: string;
   };
   guestCount: number;
   roomCount: number;
@@ -19,7 +23,7 @@ interface ListingBody {
 export const createListing: RequestHandler = async (req, res, next) => {
   const body: ListingBody = req.body;
   try {
-    const listing = new Listing({ ...body, location: body.location.label });
+    const listing = new Listing({ ...body });
 
     const newListing = await listing.save();
 
@@ -41,10 +45,20 @@ export const getListings: RequestHandler = async (req, res, next) => {
   }
 };
 
+export const getMyProperties: RequestHandler = async (req, res, next) => {
+  try {
+    const myproperties = await Listing.find({ owner: req.params.id });
+
+    res.status(200).send(myproperties);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getSingleListing: RequestHandler = async (req, res, next) => {
   const id = req.params.id;
   console.log(id);
-  
+
   try {
     const singleListing = await Listing.findById(id);
 
@@ -54,6 +68,21 @@ export const getSingleListing: RequestHandler = async (req, res, next) => {
     res.status(200).send(singleListing);
   } catch (error) {
     console.log(error);
+    next(error);
+  }
+};
+
+
+export const deleteProperty: RequestHandler = async (req, res, next) => {
+  
+  const id = req.params.id;
+  try {
+    const deletingProperty = await Listing.findByIdAndDelete(id);
+
+    console.log(id);
+    
+    res.status(200).send(deletingProperty);
+  } catch (error) {
     next(error);
   }
 };

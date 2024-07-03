@@ -6,6 +6,7 @@ import SmallSearch from "./SmallSearch";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import Menu from "./Menu";
 import { getCurrentUser } from "../utills/getCurrentUser";
+import { Link } from "react-router-dom";
 
 interface Navbar {
   setOpenRegister: Dispatch<SetStateAction<boolean>>;
@@ -58,13 +59,15 @@ const Navbar = ({
   return (
     <div className="sticky top-0 z-50 bg-white">
       <div className="flex sm:hidden justify-between  items-center py-5 px-5 text-[18px] md:flex lg:flex  transition">
-        <div className="cursor-pointer  ">
-          <img
-            className="w-[100px] cursor-pointer "
-            src="https://logos-world.net/wp-content/uploads/2020/07/Airbnb-Logo.png"
-            alt=""
-          />
-        </div>
+        <Link to={"/"}>
+          <div className="cursor-pointer  ">
+            <img
+              className="w-[100px] cursor-pointer "
+              src="https://logos-world.net/wp-content/uploads/2020/07/Airbnb-Logo.png"
+              alt=""
+            />
+          </div>
+        </Link>
         {!active && (
           <div className=" lg:flex justify-between items-center gap-5 md:hidden sm:hidden ">
             <button className="bg-white hover:bg-gray-100 opacity-70  py-3 px-4  rounded-full">

@@ -5,16 +5,11 @@ interface HeartButtonProps {
   onClick: () => void;
   currentUser: currentUser | undefined;
   listingId: string;
-  liked: string[];
 }
 
-const HeartButton = ({
-  onClick,
-  currentUser,
-  listingId,
-}: HeartButtonProps) => {
-
+const HeartButton = ({ onClick, currentUser, listingId }: HeartButtonProps) => {
   const isLiked = currentUser?.favorites.includes(listingId);
+
 
   return (
     <div

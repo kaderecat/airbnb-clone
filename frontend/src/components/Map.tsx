@@ -25,13 +25,13 @@ const Map = ({ center }: MapProps) => {
   return (
     <MapContainer
       id="asd"
-      center={(center as L.LatLngExpression) || [51, -0.09]}
+      center={center as L.LatLngExpression}
       zoom={center ? 4 : 2}
       scrollWheelZoom={false}
       className="h-[35vh] rounded-lg"
     >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-      <Marker position={center} />
+      {center && <Marker position={center} />}
     </MapContainer>
   );
 };

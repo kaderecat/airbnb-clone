@@ -7,7 +7,11 @@ import { currentUser } from "./interfaces/currentUserI";
 import { Listings } from "./interfaces/Listings";
 import { useLocation } from "react-router-dom";
 
-const Home = () => {
+interface HomeI {
+  onSetOpenLogin: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const Home = ({ onSetOpenLogin }: HomeI) => {
   const [listings, setListings] = useState<Listings[]>([]);
   const [user, setUser] = useState<currentUser | undefined>();
   const [liked, setLiked] = useState<string[]>([]);
@@ -38,11 +42,10 @@ const Home = () => {
     const getUser = async () => {
       const res = await newRequest.post("/auth/", { email });
       setUser(res.data[0]);
-      
+      return res.data[0];
     };
     getUser();
-  }, [email,liked.length]);
-
+  }, [email, liked.length]);
 
   if (query && filteredListings.length === 0) {
     return <EmptyState showReset title="No listings found" />;
@@ -53,11 +56,23 @@ const Home = () => {
       <div className="pt-24 grid  grid-cols-1  sm:grid-cols-2  md:grid-cols-3  lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8">
         {query &&
           filteredListings.map((item, i) => (
-            <ListingCard key={i} data={item} setLiked={setLiked} currentUser={user} liked={liked} />
+            <ListingCard
+              key={i}
+              data={item}
+              onSetOpenLogin={onSetOpenLogin}
+              setLiked={setLiked}
+              currentUser={user}
+            />
           ))}
         {!query &&
           listings.map((item, i) => (
-            <ListingCard key={i} setLiked={setLiked} data={item} currentUser={user} liked={liked}  />
+            <ListingCard
+              key={i}
+              setLiked={setLiked}
+              onSetOpenLogin={onSetOpenLogin}
+              data={item}
+              currentUser={user}
+            />
           ))}
       </div>
     </div>
